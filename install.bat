@@ -1,5 +1,5 @@
 @echo off
 npm install
 echo.
-echo Dependencies have been installed.
+echo package has been installed.
 pause
