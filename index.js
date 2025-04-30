@@ -4,11 +4,14 @@ const { Routes } = require('discord-api-types/v9');
 const { slash } = require('@discordjs/builders');
 const fs = require('fs');
 const ms = require('ms');
+const chalk = require('chalk');
+const figlet = require('figlet');
+const moment = require('moment');
 const config = require('./config.json');
 
 const token = config.token;
 const clientId = config.clientId;
-const guildId = config.guildId;
+const gid = config.gid;
 const saveCommandRoleId = config.saveCommandRoleId;
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -31,7 +34,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 (async () => {
     try {
         await rest.put(
-            Routes.applicationGuildCommands(clientId, guildId),
+            Routes.applicationGuildCommands(clientId, gid),
             { body: commands },
         );
         console.log('Successfully registered application commands.');
@@ -342,10 +345,22 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+
 client.once('ready', () => {
-    console.log(`Bot is ready ${client.user.tag}!`);
-    console.log(`Code by Wick Studio`);
-    console.log(`discord.gg/wicks`);
+    console.clear();
+    console.log(chalk.green(figlet.textSync('Giveaway Bot')));
+    const time = moment().format('YYYY-MM-DD HH:mm:ss');
+    console.log(chalk.blue('=========================================='));
+    console.log(chalk.yellow(`Logged in as : ${client.user.tag}`));
+    console.log(chalk.yellow(`Bot ID       : ${client.user.id}`));
+    console.log(chalk.yellow(`Time         : ${time}`));
+    console.log(chalk.yellow(`Uptime       : 0s`));
+    console.log(chalk.blue('=========================================='));
+
+    let sec = 0;
+    setInterval(() => process.stdout.write(`\r${chalk.cyan(`Uptime       : ${formatTime(++sec)}`)}`), 1000);
 });
+
+const formatTime = s => `${~~(s/3600)}h ${~~((s%3600)/60)}m ${s%60}s`;
 
 client.login(token);
